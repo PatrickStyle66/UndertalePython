@@ -87,6 +87,16 @@ class projectile(object):
     def draw(self,win):
         pygame.draw.rect(win,self.color,(self.x - 3,self.y,5,10),0)
 
+class UndProjectile():
+    def __init__(self,x,y,color,vel):
+        self.x = x
+        self.y = y
+        self.color = color
+        self.vel = vel
+
+    def draw(self,win):
+        pygame.draw.rect(win,self.color,(self.x - 3,self.y,5,10),0)
+
 class yellow:
     def __init__(self,width,height):
         self.x = 375
@@ -169,7 +179,42 @@ class purple:
                     projectile(round(self.x + self.width // 2), round(self.y + self.height // 2), (255, 255, 0), 75))
             shootloop = 1
 
+class green:
 
+    def __init__(self,width,height):
+        self.x = 375
+        self.y = 375
+        self.width = width
+        self.height = height
+        self.vel = 6
+        self.heart = pygame.image.load(os.path.join('images','green.png'))
+        self.music = pygame.mixer.music.load(os.path.join('music','SpearOfJustice.mp3'))
+    def draw(self,win):
+        win.blit(self.heart,(self.x,self.y))
+
+    def move(self):
+        global shieldf1, shieldf2, shieldb1, shieldb2
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            shieldf1 = (300, 300)
+            shieldf2 = (300, 500)
+            shieldb1 = (360, 450)
+            shieldb2 = (300, 300)
+        if keys[pygame.K_RIGHT]:
+            shieldf1 = (500, 300)
+            shieldf2 = (500, 500)
+            shieldb1 = (440, 350)
+            shieldb2 = (500, 500)
+        if keys[pygame.K_UP]:
+            shieldf1 = (300, 300)
+            shieldf2 = (500, 300)
+            shieldb1 = (360, 350)
+            shieldb2 = (500, 300)
+        if keys[pygame.K_DOWN]:
+            shieldf1 = (300, 500)
+            shieldf2 = (500, 500)
+            shieldb1 = (440, 450)
+            shieldb2 = (300, 500)
 
 def redrawGameWindow():
     win.fill((0,0,0))
@@ -178,6 +223,10 @@ def redrawGameWindow():
         pygame.draw.rect(win,(128,0,128),(200,400,400,5))
         pygame.draw.rect(win, (128, 0, 128), (200, 300, 400, 5))
         pygame.draw.rect(win, (128, 0, 128), (200, 500, 400, 5))
+    if undyne:
+        pygame.draw.circle(win,(0,255,0),(400,400),100,1)
+        pygame.draw.line(win,(0,64,255),shieldf1,shieldf2,4)
+        pygame.draw.line(win, (0, 64, 255), shieldb1, shieldb2, 4)
     win.blit(title2, (400 - (title.get_width() / 2), 100))
     win.blit(title,(400 - (title.get_width() / 2),100))
     win.blit(subtitle,(400 -(subtitle.get_width() / 2),75 + title.get_height() + subtitle.get_height()))
@@ -190,6 +239,16 @@ def redrawGameWindow():
             bullet.draw(win)
     pygame.display.update()
 
+def reset():
+    global flag,flagM,shieldb2,shieldb1,shieldf1,shieldf2,bullets
+    flagM = 1
+    flag = 1
+    shieldf1 = (300, 300)
+    shieldf2 = (500, 300)
+    shieldb1 = (360, 350)
+    shieldb2 = (500, 300)
+    bullets = []
+
 frisk = red(50,50)
 bullets = []
 shootloop = 0
@@ -197,8 +256,13 @@ updownloop = 0
 run = True
 flagM = 1
 flag = 1
+shieldf1 = (300,300)
+shieldf2 = (500,300)
+shieldb1 = (360,350)
+shieldb2 = (500,300)
 muffet = False
 mettaton = False
+undyne = False
 while run:
     clock.tick(27)
     for event in pygame.event.get():
@@ -207,31 +271,39 @@ while run:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_1]:
         pygame.mixer.stop()
-        bullets = []
-        flagM = 1
+        reset()
         muffet= False
         mettaton = False
+        undyne = False
         frisk = red(50,50)
     if keys[pygame.K_2]:
         pygame.mixer.stop()
-        bullets = []
-        flagM = 1
+        reset()
         muffet = False
         mettaton = False
+        undyne = False
         frisk = blue(50,50)
     if keys[pygame.K_3]:
         pygame.mixer.stop()
-        flagM = 1
+        reset()
         muffet = False
         mettaton = True
+        undyne = False
         frisk = yellow(50, 50)
     if keys[pygame.K_4]:
         pygame.mixer.stop()
-        flagM = 1
-        bullets = []
+        reset()
         muffet = True
         mettaton = False
+        undyne = False
         frisk = purple(50, 50)
+    if keys[pygame.K_5]:
+        pygame.mixer.stop()
+        reset()
+        muffet = False
+        mettaton = False
+        undyne = True
+        frisk = green(50, 50)
 
     if flagM == 1:
         music = frisk.music
